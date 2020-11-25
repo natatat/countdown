@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import './../style/Countdown.css';
 
 class Countdown extends React.Component {
   constructor(props) {
@@ -33,7 +35,6 @@ class Countdown extends React.Component {
       hours: 0,
       min: 0,
       sec: 0,
-      millisec: 0,
     };
 
     // calculate time difference between now and expected date
@@ -63,40 +64,68 @@ class Countdown extends React.Component {
   }
 
   addLeadingZeros(value) {
+    if (value < 0) {
+      return '00';
+    }
+
     value = String(value);
-    while (value.length < 2) {
+    if (value.length < 2) {
       value = '0' + value;
     }
     return value;
   }
 
+  formatText(value, text) {
+    if (value === 1) {
+      return text;
+    } else {
+      return text + 's';
+    }
+  }
+
   render() {
-    const countDown = this.state;
+    const { years, days, hours, min, sec } = this.state;
+    const finalMinute = years < 1 && days < 1 && hours < 1 && min < 1;
 
     return (
-      <div className="Countdown">
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.days)}</strong>
-          <span>{countDown.days === 1 ? 'Day' : 'Days'}</span>
-        </span>
+      <div className={`Countdown ${finalMinute ? 'red' : ''}`}>
+        {years >= 1 && (
+          <div className="countdown-col">
+            <div className="numbers">{this.addLeadingZeros(years)}</div>
+            <div className="text">{this.formatText(years, 'year')}</div>
+          </div>
+        )}
 
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.hours)}</strong>
-          <span>Hours</span>
-        </span>
+        <div className="countdown-col">
+          <div className="numbers">{this.addLeadingZeros(days)}</div>
+          <div className="text">{this.formatText(days, 'day')}</div>
+        </div>
 
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.min)}</strong>
-          <span>Min</span>
-        </span>
+        <div className="countdown-col">
+          <div className="numbers">{this.addLeadingZeros(hours)}</div>
+          <div className="text">{this.formatText(hours, 'hour')}</div>
+        </div>
 
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.sec)}</strong>
-          <span>Sec</span>
-        </span>
+        <div className="countdown-col">
+          <div className="numbers">{this.addLeadingZeros(min)}</div>
+          <div className="text">{this.formatText(min, 'minute')}</div>
+        </div>
+
+        <div className="countdown-col">
+          <div className="numbers">{this.addLeadingZeros(sec)}</div>
+          <div className="text">seconds</div>
+        </div>
       </div>
     );
   }
 }
+
+Countdown.propTypes = {
+  date: PropTypes.string.isRequired,
+};
+
+Countdown.defaultProps = {
+  date: 'December 24, 2020',
+};
 
 export default Countdown;
